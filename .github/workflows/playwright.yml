@@ -1,27 +1,27 @@
 name: Playwright Tests
 on:
   push:
-    branches: [ main, master ]
+    branches: [main]
   pull_request:
-    branches: [ main, master ]
+    branches: [main]
 jobs:
   test:
     timeout-minutes: 60
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # Đây chính là lúc bạn chọn máy ảo (Ubuntu)
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
-    - name: Install dependencies
-      run: npm ci
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
-    - name: Run Playwright tests
-      run: npx playwright test
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
+      - uses: actions/checkout@v4 # Lấy code từ repo vào VM
+      - uses: actions/setup-node@v4 # Cài đặt môi trường Node.js
+        with:
+          node-version: 18
+      - name: Install dependencies
+        run: npm install # Cài đặt các thư viện cần thiết
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps # Cài trình duyệt cho VM
+      - name: Run Playwright tests
+        run: npx playwright test tests/post.test.ts --project api # Lệnh chạy code auto của bạn
+      - uses: actions/upload-artifact@v4 # Lưu lại kết quả (report) nếu cần
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
