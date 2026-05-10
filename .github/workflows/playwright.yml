@@ -4,25 +4,26 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-  workflow_dispatch: # Sơn nhớ giữ dòng này để có nút bấm chạy tay nhé!
+  workflow_dispatch:
 
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/playwright:v1.59.1-jammy
+      image: mcr.microsoft.com/playwright:v1.43.0-jammy
+    # Ép dùng Node 24 để hết cảnh báo vàng (Warning)
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
-    # --- ĐÂY LÀ ĐOẠN CHIA SHARD ---
     strategy:
-      fail-fast: false # Nếu 1 máy fail, các máy khác vẫn tiếp tục chạy
+      fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3] # Chạy 3 máy ảo
+        shardIndex: [1, 2, 3]
         shardTotal: [3]
 
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 18
@@ -32,14 +33,40 @@ jobs:
         run: npm ci
 
       - name: Run Playwright tests
-        # Thêm flag --shard vào lệnh chạy
-        # Nó sẽ chia file tests/post.test.ts ra các máy (nếu file này có nhiều test case)
         run: npx playwright test tests/ --project api --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload partial report
         if: always()
         with:
-          # Sơn ĐẶC BIỆT lưu ý: Tên artifact phải khác nhau ở mỗi máy
-          name: playwright-report-${{ matrix.shardIndex }}
+          # Đặt tên có tiền tố chung để máy gộp dễ tìm
+          name: all-shard-reports
+          path: playwright-report/
+          retention-days: 1 # Chỉ giữ 1 ngày để tiết kiệm bộ nhớ, vì lát nữa sẽ gộp lại
+
+  merge-reports:
+    # Chỉ chạy khi job 'test' đã xong (bất kể test pass hay fail)
+    if: always()
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Download all shards reports
+        uses: actions/download-artifact@v4
+        with:
+          name: all-shard-reports
+          path: all-reports
+
+      - name: Merge into HTML Report
+        run: |
+          npx playwright merge-reports --reporter html ./all-reports
+
+      - name: Upload Final Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: final-playwright-report
           path: playwright-report/
           retention-days: 30
