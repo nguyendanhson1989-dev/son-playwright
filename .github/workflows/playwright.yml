@@ -8,6 +8,8 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest # Đây chính là lúc bạn chọn máy ảo (Ubuntu)
+    container:
+      image: mcr.microsoft.com/playwright:v1.43.0-jammy
     steps:
       - uses: actions/checkout@v4 # Lấy code từ repo vào VM
       - uses: actions/setup-node@v4 # Cài đặt môi trường Node.js
