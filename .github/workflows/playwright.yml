@@ -11,8 +11,7 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/playwright:v1.43.0-jammy
-    # Ép dùng Node 24 để hết cảnh báo vàng (Warning)
+      image: mcr.microsoft.com/playwright:v1.59.1-jammy
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
@@ -37,14 +36,14 @@ jobs:
 
       - name: Upload partial report
         if: always()
+        uses: actions/upload-artifact@v4
         with:
-          # Đặt tên có tiền tố chung để máy gộp dễ tìm
-          name: all-shard-reports
+          # Đặt tên riêng cho từng shard để không bị ghi đè
+          name: all-shard-reports-${{ matrix.shardIndex }}
           path: playwright-report/
-          retention-days: 1 # Chỉ giữ 1 ngày để tiết kiệm bộ nhớ, vì lát nữa sẽ gộp lại
+          retention-days: 1
 
   merge-reports:
-    # Chỉ chạy khi job 'test' đã xong (bất kể test pass hay fail)
     if: always()
     needs: [test]
     runs-on: ubuntu-latest
@@ -57,8 +56,9 @@ jobs:
       - name: Download all shards reports
         uses: actions/download-artifact@v4
         with:
-          name: all-shard-reports
           path: all-reports
+          pattern: all-shard-reports-*
+          merge-multiple: true
 
       - name: Merge into HTML Report
         run: |
