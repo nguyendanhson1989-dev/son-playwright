@@ -11,7 +11,7 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/playwright:v1.43.0-jammy
+      image: mcr.microsoft.com/playwright:v1.59.1-jammy
 
     # --- ĐÂY LÀ ĐOẠN CHIA SHARD ---
     strategy:

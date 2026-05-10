@@ -3,7 +3,7 @@ import { z } from "zod";
 
 // Định nghĩa cái khuôn cho Post
 export const PostSchema = z.object({
-  id: z.string(), // Phải là số
+  id: z.number(), // Phải là số
   title: z.string().min(1), // Phải là chữ và không được để tr
   body: z.string(), // Phải là chữ
   userId: z.number(), // Phải là số
