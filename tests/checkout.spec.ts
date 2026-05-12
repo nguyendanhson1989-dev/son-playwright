@@ -1,21 +1,33 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Module Checkout - Shard 2", () => {
-  test("Thêm vào giỏ hàng", async ({ page }) => {
+  test("Add to cart", async ({ page }) => {
+    // Navigate to the demo site
     await page.goto("https://demo.playwright.dev/todomvc/");
+
+    // Artificial delay to simulate processing or visual check
     await page.waitForTimeout(5000);
+
     expect(true).toBe(true);
   });
 
-  test("Nhập địa chỉ giao hàng", async ({ page }) => {
+  test("Enter shipping address", async ({ page }) => {
+    // Navigate to the demo site
     await page.goto("https://demo.playwright.dev/todomvc/");
+
+    // Artificial delay to simulate processing or visual check
     await page.waitForTimeout(5000);
+
     expect(true).toBe(true);
   });
 
-  test("Xác nhận đơn hàng", async ({ page }) => {
+  test("Confirm order", async ({ page }) => {
+    // Navigate to the demo site
     await page.goto("https://demo.playwright.dev/todomvc/");
+
+    // Artificial delay to simulate processing or visual check
     await page.waitForTimeout(5000);
+
     expect(true).toBe(true);
   });
 });

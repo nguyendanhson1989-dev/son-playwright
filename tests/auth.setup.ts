@@ -19,21 +19,21 @@ setup("authenticate", async ({ request }) => {
   console.log("📊 Status Code:", response.status());
   const body = await response.json();
 
-  // Nếu vẫn bị 401, hãy thử log ra để xem nó có còn đòi x-api-key không
+  // If status is not 200, log the body to check for errors (e.g., missing API keys)
   if (response.status() !== 200) {
-    console.log("📦 Body lỗi:", body);
+    console.log("📦 Error Body:", body);
   }
 
   const realToken = body.token;
 
   if (!realToken) {
     console.error(
-      "❌ Lỗi: Server không trả về token. Kiểm tra lại Full Body ở trên!",
+      "❌ Error: Server did not return a token. Check the Full Body log above!",
     );
     return;
   }
 
-  console.log("🚀 Token thật lấy từ ReqRes:", realToken);
+  console.log("🚀 Valid Token received:", realToken);
 
   const storageState = {
     cookies: [],
@@ -46,5 +46,5 @@ setup("authenticate", async ({ request }) => {
   };
 
   fs.writeFileSync(authFile, JSON.stringify(storageState, null, 2));
-  console.log("✅ Đã ghi file thành công!");
+  console.log("✅ Auth file written successfully!");
 });

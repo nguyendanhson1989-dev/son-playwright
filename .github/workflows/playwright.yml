@@ -1,10 +1,10 @@
 name: Playwright Tests
 on:
   push:
-    branches: [main] # Chạy khi có code mới đẩy lên nhánh main
+    branches: [main] # Runs when new code is pushed to the main branch
   pull_request:
-    branches: [main] # Chạy khi có Pull Request vào nhánh main
-  workflow_dispatch: # Cho phép bấm nút chạy thủ công trên GitHub UI
+    branches: [main] # Runs when a Pull Request is created against the main branch
+  workflow_dispatch: # Allows manual triggering from the GitHub UI
 
 jobs:
   test:
@@ -38,7 +38,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          # Đặt tên riêng cho từng shard để không bị ghi đè
+          # Assign unique names to each shard to prevent overwriting
           name: all-shard-reports-${{ matrix.shardIndex }}
           path: blob-report/
           retention-days: 1
