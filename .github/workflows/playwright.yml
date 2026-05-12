@@ -32,7 +32,7 @@ jobs:
         run: npm ci
 
       - name: Run Playwright tests
-        run: npx playwright test tests/ --project api --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=blob
+        run: npx playwright test  tests/ --project api --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=blob
 
       - name: Upload partial report
         if: always()
